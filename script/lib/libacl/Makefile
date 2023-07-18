@@ -2,7 +2,7 @@
 GARNAME       = acl
 GARVERSION    = 2.3.1
 CATEGORIES    = lib
-MASTER_SITES  = https://download.savannah.gnu.org/releases/acl/
+MASTER_SITES  = https://download-mirror.savannah.gnu.org/releases/acl/
 DISTFILES     = $(DISTNAME).tar.gz
 LICENSE       = GPL2/LGPL2_1
 
