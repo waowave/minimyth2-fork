@@ -2,7 +2,7 @@
 GARNAME      = sysvinit
 GARVERSION   = 2.99
 CATEGORIES   = system
-MASTER_SITES = http://download.savannah.gnu.org/releases/$(GARNAME)/
+MASTER_SITES = http://download-mirror.savannah.gnu.org/releases/$(GARNAME)/
 DISTFILES    = $(DISTNAME).tar.xz
 PATCHFILES   = $(DISTNAME)-make-boot-silent.patch
 PATCHFILES  += $(DISTNAME)-fix-compile-on-glibc2.36.patch
