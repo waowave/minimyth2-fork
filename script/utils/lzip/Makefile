@@ -1,7 +1,7 @@
 GARNAME = lzip
 GARVERSION = 1.17
 CATEGORIES = utils
-MASTER_SITES = http://download.savannah.gnu.org/releases/$(GARNAME)/
+MASTER_SITES = http://download-mirror.savannah.gnu.org/releases/$(GARNAME)/
 DISTFILES = $(DISTNAME).tar.gz
 LICENSE = GPL2
 
