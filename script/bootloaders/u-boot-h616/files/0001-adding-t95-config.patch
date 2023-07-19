@@ -1,20 +1,21 @@
-diff --speed-large-files --no-dereference --minimal -Naur u-boot-sunxi-647b392bf20614006917d5fcd3390347a668eee5/arch/arm/dts/Makefile u-boot-sunxi-647b392bf20614006917d5fcd3390347a668eee5/arch/arm/dts/Makefile
---- u-boot-sunxi-647b392bf20614006917d5fcd3390347a668eee5/arch/arm/dts/Makefile	2023-04-06 18:41:19.157275230 +0200
-+++ u-boot-sunxi-647b392bf20614006917d5fcd3390347a668eee5/arch/arm/dts/Makefile	2023-04-06 18:41:01.703942541 +0200
-@@ -624,7 +624,8 @@
- dtb-$(CONFIG_MACH_SUN50I_H616) += \
- 	sun50i-h616-orangepi-zero2.dtb \
- 	sun50i-h313-x96q-lpddr3.dtb \
--	sun50i-h313-x96q-ddr3.dtb
-+	sun50i-h313-x96q-ddr3.dtb \
-+	sun50i-h616-tanix-tx6s.dtb
- dtb-$(CONFIG_MACH_SUN50I) += \
- 	sun50i-a64-amarula-relic.dtb \
- 	sun50i-a64-bananapi-m64.dtb \
-diff --speed-large-files --no-dereference --minimal -Naur u-boot-sunxi-647b392bf20614006917d5fcd3390347a668eee5/arch/arm/dts/sun50i-h616-tanix-tx6s.dts u-boot-sunxi-647b392bf20614006917d5fcd3390347a668eee5/arch/arm/dts/sun50i-h616-tanix-tx6s.dts
---- u-boot-sunxi-647b392bf20614006917d5fcd3390347a668eee5/arch/arm/dts/sun50i-h616-tanix-tx6s.dts	1970-01-01 01:00:00.000000000 +0100
-+++ u-boot-sunxi-647b392bf20614006917d5fcd3390347a668eee5/arch/arm/dts/sun50i-h616-tanix-tx6s.dts	2023-04-06 14:11:24.867867170 +0200
-@@ -0,0 +1,236 @@
+From 30e6e171b673806eeec366a688bc8a42bf078656 Mon Sep 17 00:00:00 2001
+From: Alexey Orlov <ao-github_feedback@xao.io>
+Date: Wed, 19 Jul 2023 16:53:06 +0300
+Subject: [PATCH] adding t95 config
+
+---
+ arch/arm/dts/sun50i-h616-t95.dts | 203 +++++++++++++++++++++++++++
+ configs/t95_defconfig                |  20 +++
+ 2 files changed, 223 insertions(+)
+ create mode 100644 arch/arm/dts/sun50i-h616-t95.dts
+ create mode 100644 configs/t95_defconfig
+
+diff --git a/arch/arm/dts/sun50i-h616-t95.dts b/arch/arm/dts/sun50i-h616-t95.dts
+new file mode 100644
+index 00000000..ffd04a0c
+--- /dev/null
++++ b/arch/arm/dts/sun50i-h616-t95.dts
+@@ -0,0 +1,203 @@
 +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
 +/*
 + * Copyright (C) 2021 Arm Ltd.
@@ -26,16 +27,12 @@ diff --speed-large-files --no-dereference --minimal -Naur u-boot-sunxi-647b392bf
 +
 +#include <dt-bindings/gpio/gpio.h>
 +#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/leds/common.h>
 +
 +/ {
-+	model = "Tanix TX6s";
-+	compatible = "tanix,tx6s", "allwinner,sun50i-h616";
++	model = "T95 xao";
++	compatible = "allwinner,t95", "allwinner,sun50i-h616";
 +
 +	aliases {
-+		mmc0 = &mmc0;
-+		mmc2 = &mmc2;
-+		ethernet0 = &emac1;
 +		serial0 = &uart0;
 +	};
 +
@@ -65,42 +62,9 @@ diff --speed-large-files --no-dereference --minimal -Naur u-boot-sunxi-647b392bf
 +	status = "okay";
 +};
 +
-+&emac1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&rmii_pins>;
-+	phy-mode = "rmii";
-+	phy-handle = <&rmii_phy>;
-+	phy-supply = <&reg_aldo1>;
-+	allwinner,rx-delay-ps = <3100>;
-+	allwinner,tx-delay-ps = <700>;
-+	status = "okay";
-+};
-+
-+&mdio1 {
-+	rmii_phy: ethernet-phy@1 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <1>;
-+	};
-+};
-+
-+&r_i2c {
-+	status = "okay";
-+
-+	axp305_1: pmic@36 {
-+		compatible = "x-powers,axp305", "x-powers,axp805",
-+		"x-powers,axp806";
-+		reg = <0x36>;
-+
-+		/* dummy interrupt to appease the driver for now */
-+		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
-+	};
-+};
-+
 +&mmc0 {
 +	vmmc-supply = <&reg_dcdce>;
-+	//cd-gpios = <&pio 8 16 GPIO_ACTIVE_LOW>;	/* PI16 */
++//	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;	/* PF6 */
 +	broken-cd;
 +	bus-width = <4>;
 +	status = "okay";
@@ -112,6 +76,7 @@ diff --speed-large-files --no-dereference --minimal -Naur u-boot-sunxi-647b392bf
 +	bus-width = <8>;
 +	non-removable;
 +	cap-mmc-hw-reset;
++	mmc-ddr-1_8v;
 +	mmc-hs200-1_8v;
 +	status = "okay";
 +};
@@ -152,6 +117,7 @@ diff --speed-large-files --no-dereference --minimal -Naur u-boot-sunxi-647b392bf
 +				regulator-name = "vcc-sys";
 +			};
 +
++			/* Enabled by the Android BSP */
 +			reg_aldo2: aldo2 {
 +				regulator-min-microvolt = <3300000>;
 +				regulator-max-microvolt = <3300000>;
@@ -159,6 +125,7 @@ diff --speed-large-files --no-dereference --minimal -Naur u-boot-sunxi-647b392bf
 +				status = "disabled";
 +			};
 +
++			/* Enabled by the Android BSP */
 +			reg_aldo3: aldo3 {
 +				regulator-min-microvolt = <3300000>;
 +				regulator-max-microvolt = <3300000>;
@@ -173,6 +140,7 @@ diff --speed-large-files --no-dereference --minimal -Naur u-boot-sunxi-647b392bf
 +				regulator-name = "vcc1v8";
 +			};
 +
++			/* Enabled by the Android BSP */
 +			reg_bldo2: bldo2 {
 +				regulator-min-microvolt = <1800000>;
 +				regulator-max-microvolt = <1800000>;
@@ -205,14 +173,14 @@ diff --speed-large-files --no-dereference --minimal -Naur u-boot-sunxi-647b392bf
 +			reg_dcdca: dcdca {
 +				regulator-always-on;
 +				regulator-min-microvolt = <810000>;
-+				regulator-max-microvolt = <1080000>;
++				regulator-max-microvolt = <1100000>;
 +				regulator-name = "vdd-cpu";
 +			};
 +
 +			reg_dcdcc: dcdcc {
 +				regulator-always-on;
 +				regulator-min-microvolt = <810000>;
-+				regulator-max-microvolt = <1080000>;
++				regulator-max-microvolt = <990000>;
 +				regulator-name = "vdd-gpu-sys";
 +			};
 +
@@ -224,7 +192,7 @@ diff --speed-large-files --no-dereference --minimal -Naur u-boot-sunxi-647b392bf
 +			};
 +
 +			reg_dcdce: dcdce {
-+				regulator-boot-on;
++				regulator-always-on;
 +				regulator-min-microvolt = <3300000>;
 +				regulator-max-microvolt = <3300000>;
 +				regulator-name = "vcc-eth-mmc";
@@ -251,37 +219,32 @@ diff --speed-large-files --no-dereference --minimal -Naur u-boot-sunxi-647b392bf
 +&usbphy {
 +	status = "okay";
 +};
-diff --speed-large-files --no-dereference --minimal -Naur u-boot-sunxi-647b392bf20614006917d5fcd3390347a668eee5/configs/tanix_tx6s_defconfig u-boot-sunxi-647b392bf20614006917d5fcd3390347a668eee5/configs/tanix_tx6s_defconfig
---- u-boot-sunxi-647b392bf20614006917d5fcd3390347a668eee5/configs/tanix_tx6s_defconfig	1970-01-01 01:00:00.000000000 +0100
-+++ u-boot-sunxi-647b392bf20614006917d5fcd3390347a668eee5/configs/tanix_tx6s_defconfig	2023-04-06 14:11:24.867867170 +0200
-@@ -0,0 +1,30 @@
+diff --git a/configs/t95_defconfig b/configs/t95_defconfig
+new file mode 100644
+index 00000000..fcc1cee3
+--- /dev/null
++++ b/configs/t95_defconfig
+@@ -0,0 +1,20 @@
 +CONFIG_ARM=y
 +CONFIG_ARCH_SUNXI=y
-+CONFIG_DEFAULT_DEVICE_TREE="sun50i-h616-tanix-tx6s"
++CONFIG_DEFAULT_DEVICE_TREE="sun50i-h616-t95"
 +CONFIG_SPL=y
-+CONFIG_SUNXI_DRAM_H616_DDR3_1333=y
-+CONFIG_DRAM_CLK=648
-+CONFIG_DRAM_ODT_EN=y
-+CONFIG_DRAM_SUN50I_H616_UNKNOWN_FEATURE=y
-+CONFIG_DRAM_SUN50I_H616_BIT_DELAY_COMPENSATION=y
-+CONFIG_DRAM_SUN50I_H616_READ_CALIBRATION=y
 +CONFIG_DRAM_SUN50I_H616_DX_ODT=0x03030303
 +CONFIG_DRAM_SUN50I_H616_DX_DRI=0x0e0e0e0e
-+CONFIG_DRAM_SUN50I_H616_CA_DRI=0x00001c12
-+CONFIG_DRAM_SUN50I_H616_ODT_EN=0x00000001
++CONFIG_DRAM_SUN50I_H616_CA_DRI=0x1c12
 +CONFIG_DRAM_SUN50I_H616_TPR0=0xc0000c05
-+CONFIG_DRAM_SUN50I_H616_TPR2=0x00000000
 +CONFIG_DRAM_SUN50I_H616_TPR10=0x2f0007
 +CONFIG_DRAM_SUN50I_H616_TPR11=0xffffdddd
 +CONFIG_DRAM_SUN50I_H616_TPR12=0xfedf7557
 +CONFIG_MACH_SUN50I_H616=y
 +CONFIG_R_I2C_ENABLE=y
++# CONFIG_SYS_MALLOC_CLEAR_ON_INIT is not set
 +CONFIG_SPL_I2C=y
-+CONFIG_SPL_I2C_SUPPORT=y
 +CONFIG_SPL_SYS_I2C_LEGACY=y
 +CONFIG_SYS_I2C_MVTWSI=y
 +CONFIG_SYS_I2C_SLAVE=0x7f
-+CONFIG_SYS_I2C_SPEED=100000
-+CONFIG_PHY_REALTEK=y
-+CONFIG_SUN8I_EMAC=y
-+CONFIG_I2C3_ENABLE=y
++CONFIG_SYS_I2C_SPEED=400000
++CONFIG_SUPPORT_EMMC_BOOT=y
+-- 
+2.41.0
+
